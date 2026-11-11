@@ -1,0 +1,17 @@
+package config
+
+import (
+	"github.com/BurntSushi/toml"
+)
+
+type Config struct {
+	Package tomlPackage `toml:"package"`
+	Conf    tomlConfig  `toml:"config"`
+}
+
+func Parse() (*Config, error) {
+	var conf Config
+	_, err := toml.DecodeFile("Razor.toml", &conf)
+
+	return &conf, err
+}
