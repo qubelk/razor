@@ -1,6 +1,8 @@
 package config
 
 import (
+	"os"
+
 	"github.com/BurntSushi/toml"
 )
 
@@ -10,8 +12,13 @@ type Config struct {
 }
 
 func Parse() (*Config, error) {
+	data, err := os.ReadFile("Razor.toml")
+	if err != nil {
+		return nil, err
+	}
+
 	var conf Config
-	_, err := toml.DecodeFile("Razor.toml", &conf)
+	err = toml.Unmarshal(data, &conf)
 
 	return &conf, err
 }
