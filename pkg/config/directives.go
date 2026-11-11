@@ -30,6 +30,9 @@ type tomlPackage struct {
 //
 // ```
 // By default Razor create Razor.toml with clang and c11 standard.
+// Now suppored only gcc or clang as compilers, and next standarts:
+// [89, 99, 11, 17, 23].
+// Gnu standarts not supported.
 // This directive is required.
 type tomlConfig struct {
 	Compiler string `toml:"compiler"`
