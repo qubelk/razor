@@ -12,8 +12,8 @@ func (c *Config) validateCompiler() error {
 	}
 
 	if !slices.Contains(supportedCompilers, c.Conf.Compiler) {
-		return fmt.Errorf("%s is not supported compiler. Now supported only gcc and clang",
-			c.Conf.Compiler)
+		return fmt.Errorf("%s is not supported compiler. Now supported only %s and %s",
+			c.Conf.Compiler, supportedCompilers[0], supportedCompilers[1])
 	}
 
 	return nil
@@ -29,7 +29,7 @@ func (c *Config) validateStandard() error {
 	}
 
 	if !slices.Contains(standards, c.Conf.Standard) {
-		return fmt.Errorf("unknown standart %d", c.Conf.Standard)
+		return fmt.Errorf("unknown standart %d. Use one of %v", c.Conf.Standard, standards)
 	}
 
 	return nil
