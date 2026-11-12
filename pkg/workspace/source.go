@@ -8,7 +8,7 @@ import (
 func FindSource() ([]string, error) {
 	var paths []string
 
-	err := filepath.Walk("src/", func(path string, info fs.FileInfo, err error) error {
+	err := filepath.Walk("src", func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
