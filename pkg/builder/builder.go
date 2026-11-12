@@ -39,7 +39,7 @@ func (b *Builder) buildCommand(path string) ([]string, error) {
 	}
 
 	cmd := []string{
-		"-I.",
+		"-I%s", b.cfg.Conf.Include,
 		fmt.Sprintf("-std=c%d", b.cfg.Conf.Standard),
 		"-c",
 		path,
