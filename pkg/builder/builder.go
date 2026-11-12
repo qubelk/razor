@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"razor/pkg/config"
 	"strings"
+
+	"golang.org/x/sync/errgroup"
 )
 
 type Builder struct {
@@ -14,6 +16,7 @@ type Builder struct {
 	sources []string
 }
 
+// Source must contains only .c files
 func New(cfg *config.Config, sources []string) *Builder {
 	return &Builder{
 		cfg:     cfg,
@@ -25,7 +28,7 @@ func (b *Builder) createOutpath(path string) (string, error) {
 	trimedPath := strings.TrimSuffix(path, ".c")
 	outpath := filepath.Join("build", trimedPath+".o")
 
-	if err := os.MkdirAll(outpath, 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(outpath), 0755); err != nil {
 		return "", err
 	}
 
@@ -57,23 +60,34 @@ func (b *Builder) executeBuild(path string) error {
 	}
 
 	out, err := exec.Command(b.cfg.Conf.Compiler, cmd...).CombinedOutput()
-
-	if err != nil {
-		fmt.Println(err)
-		return err
+	if len(out) > 0 {
+		fmt.Print(string(out))
 	}
 
-	if len(out) > 0 {
-		fmt.Println(string(out))
+	if err != nil {
+		fmt.Print(err)
+		return err
 	}
 
 	return nil
 }
 
-func (b *Builder) Build() error {
+func (b *Builder) buildObjects() error {
+	var eg errgroup.Group
+
 	for _, v := range b.sources {
-		b.executeBuild(v)
+		eg.Go(func() error {
+			if err := b.executeBuild(v); err != nil {
+				return fmt.Errorf("failed to build object file for %s: %w", v, err)
+			}
+
+			return nil
+		})
 	}
 
-	return nil
+	return eg.Wait()
+}
+
+func (b *Builder) Build() error {
+	return b.buildObjects()
 }
