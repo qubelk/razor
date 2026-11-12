@@ -1,6 +1,7 @@
 package builder
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"os/exec"
@@ -123,11 +124,37 @@ func (b *Builder) buildExecutable() error {
 	return nil
 }
 
-func (b *Builder) Build() error {
-	err := b.buildObjects()
+func (b *Builder) createVersionFile() error {
+	versionPath := filepath.Join("build", ".VERSION")
+
+	f, err := os.Create(versionPath)
 	if err != nil {
 		return err
 	}
+	defer f.Close()
 
-	return b.buildExecutable()
+	scanner := bufio.NewScanner(f)
+	version := scanner.Text()
+	if b.cfg.Package.Version == version {
+		return nil
+	}
+
+	_, err = f.WriteString(b.cfg.Package.Version)
+	return err
+}
+
+func (b *Builder) Build() error {
+	if err := b.buildObjects(); err != nil {
+		return err
+	}
+
+	if err := b.buildExecutable(); err != nil {
+		return err
+	}
+
+	if err := b.createVersionFile(); err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -3,7 +3,7 @@ package config
 // Directive [package] in Razor.toml
 // Here's described package name and version.
 // Package name is name of executable in ./build/ folder.
-// Version now not used, but Razor create package-name.VERSION file in ./build/ folder.
+// Version now not used, but Razor create .VERSION file in ./build/ folder.
 // Example:
 // ```toml
 //
