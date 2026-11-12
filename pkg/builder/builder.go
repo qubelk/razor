@@ -29,12 +29,27 @@ func (b *Builder) exists(path string) bool {
 	return err == nil
 }
 
-func (b *Builder) buildExecutable() error {
-	exePath := filepath.Join("build", b.cfg.Package.Name)
+func (b *Builder) buildExeCommand() []string {
+	outpath := filepath.Join("build", b.cfg.Package.Name)
 	var cmd []string
 
 	cmd = append(cmd, b.objects...)
-	cmd = append(cmd, "-o", exePath)
+	cmd = append(cmd, "-o", outpath)
+
+	return cmd
+}
+
+func (b *Builder) buildExecutable() error {
+	need, err := b.needRebuildExe()
+	if err != nil {
+		return err
+	}
+
+	if !need {
+		return nil
+	}
+
+	cmd := b.buildExeCommand()
 
 	out, err := exec.Command(b.cfg.Conf.Compiler, cmd...).CombinedOutput()
 	if len(out) > 0 {

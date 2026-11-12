@@ -30,7 +30,7 @@ func (b *Builder) createOutpath(path string) (string, error) {
 	return outpath, nil
 }
 
-func (b *Builder) buildCommand(path string) ([]string, error) {
+func (b *Builder) buildObjectCommand(path string) ([]string, error) {
 	outpath, err := b.createOutpath(path)
 	if err != nil {
 		return nil, err
@@ -48,8 +48,8 @@ func (b *Builder) buildCommand(path string) ([]string, error) {
 	return cmd, nil
 }
 
-func (b *Builder) executeBuild(path string) error {
-	cmd, err := b.buildCommand(path)
+func (b *Builder) executeBuildObject(path string) error {
+	cmd, err := b.buildObjectCommand(path)
 	if err != nil {
 		return err
 	}
@@ -73,17 +73,16 @@ func (b *Builder) buildObjects() error {
 	for _, v := range b.sources {
 		b.objects = append(b.objects, b.toObject(v))
 		eg.Go(func() error {
-			need, err := b.needRebuild(v)
+			need, err := b.needRebuildObject(v)
 			if err != nil {
 				return err
 			}
 
 			if !need {
-				fmt.Println("no need rebuild")
 				return nil
 			}
 
-			if err := b.executeBuild(v); err != nil {
+			if err := b.executeBuildObject(v); err != nil {
 				return fmt.Errorf("failed to build object file for %s: %w", v, err)
 			}
 

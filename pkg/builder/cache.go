@@ -1,8 +1,8 @@
 package builder
 
 import (
-	"fmt"
 	"os"
+	"path/filepath"
 )
 
 func (b *Builder) compareModTime(source, object string) (bool, error) {
@@ -19,10 +19,8 @@ func (b *Builder) compareModTime(source, object string) (bool, error) {
 	return sourceStat.ModTime().After(objectStat.ModTime()), nil
 }
 
-func (b *Builder) needRebuild(source string) (bool, error) {
-	object := b.toObject(source)
+func (b *Builder) needRebuild(source, object string) (bool, error) {
 	if !b.exists(object) {
-		fmt.Println("object not exists, rebuild")
 		return true, nil
 	}
 
@@ -32,4 +30,24 @@ func (b *Builder) needRebuild(source string) (bool, error) {
 	}
 
 	return compare, nil
+}
+
+func (b *Builder) needRebuildObject(source string) (bool, error) {
+	return b.needRebuild(source, b.toObject(source))
+}
+
+func (b *Builder) needRebuildExe() (bool, error) {
+	exe := filepath.Join("build", b.cfg.Package.Name)
+	for _, v := range b.objects {
+		need, err := b.needRebuild(v, exe)
+		if err != nil {
+			return true, err
+		}
+
+		if need {
+			return true, nil
+		}
+	}
+
+	return false, nil
 }
