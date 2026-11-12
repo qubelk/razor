@@ -27,7 +27,6 @@ type tomlPackage struct {
 // [config]
 // compiler = "clang"
 // standart = 11
-// include = "."
 //
 // ```
 // By default Razor create Razor.toml with clang and c11 standard.
@@ -38,5 +37,4 @@ type tomlPackage struct {
 type tomlConfig struct {
 	Compiler string `toml:"compiler"`
 	Standard int    `toml:"standart"`
-	Include  string `toml:"include"`
 }

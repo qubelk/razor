@@ -7,29 +7,42 @@ import (
 	"path/filepath"
 	"razor/pkg/config"
 	"strings"
+	"sync"
 
 	"golang.org/x/sync/errgroup"
 )
 
 type Builder struct {
 	cfg     *config.Config
+	mtx     sync.Mutex
 	sources []string
+	objects []string
 }
 
 // Source must contains only .c files
 func New(cfg *config.Config, sources []string) *Builder {
 	return &Builder{
 		cfg:     cfg,
+		mtx:     sync.Mutex{},
 		sources: sources,
+		objects: make([]string, 0, len(sources)),
 	}
+}
+
+func (b *Builder) exists(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
 }
 
 func (b *Builder) createOutpath(path string) (string, error) {
 	trimedPath := strings.TrimSuffix(path, ".c")
 	outpath := filepath.Join("build", trimedPath+".o")
 
-	if err := os.MkdirAll(filepath.Dir(outpath), 0755); err != nil {
-		return "", err
+	dir := filepath.Dir(outpath)
+	if !b.exists(dir) {
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			return "", err
+		}
 	}
 
 	return outpath, nil
@@ -42,7 +55,7 @@ func (b *Builder) buildCommand(path string) ([]string, error) {
 	}
 
 	cmd := []string{
-		"-I%s", b.cfg.Conf.Include,
+		"-I.",
 		fmt.Sprintf("-std=c%d", b.cfg.Conf.Standard),
 		"-c",
 		path,
@@ -69,6 +82,8 @@ func (b *Builder) executeBuild(path string) error {
 		return err
 	}
 
+	b.objects = append(b.objects, cmd[len(cmd)-1])
+
 	return nil
 }
 
@@ -88,6 +103,31 @@ func (b *Builder) buildObjects() error {
 	return eg.Wait()
 }
 
+func (b *Builder) buildExecutable() error {
+	exePath := filepath.Join("build", b.cfg.Package.Name)
+	var cmd []string
+
+	cmd = append(cmd, b.objects...)
+	cmd = append(cmd, "-o", exePath)
+
+	out, err := exec.Command(b.cfg.Conf.Compiler, cmd...).CombinedOutput()
+	if len(out) > 0 {
+		fmt.Print(string(out))
+	}
+
+	if err != nil {
+		fmt.Print(err)
+		return err
+	}
+
+	return nil
+}
+
 func (b *Builder) Build() error {
-	return b.buildObjects()
+	err := b.buildObjects()
+	if err != nil {
+		return err
+	}
+
+	return b.buildExecutable()
 }
