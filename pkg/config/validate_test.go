@@ -27,7 +27,7 @@ func TestValidateCompiler(t *testing.T) {
 		t.Run(tc.compiler, func(t *testing.T) {
 			t.Parallel()
 			cfg := Config{
-				Conf: tomlConfig{
+				Conf: TomlConfig{
 					Compiler: tc.compiler,
 				},
 			}
@@ -74,7 +74,7 @@ func TestValidateStandart(t *testing.T) {
 		t.Run(fmt.Sprintf("c%d", tc.standart), func(t *testing.T) {
 			t.Parallel()
 			cfg := Config{
-				Conf: tomlConfig{
+				Conf: TomlConfig{
 					Standard: tc.standart,
 				},
 			}

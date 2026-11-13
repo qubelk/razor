@@ -5,8 +5,8 @@ import (
 )
 
 type Config struct {
-	Package tomlPackage `toml:"package"`
-	Conf    tomlConfig  `toml:"config"`
+	Package TomlPackage `toml:"package"`
+	Conf    TomlConfig  `toml:"config"`
 }
 
 func Parse() (*Config, error) {
