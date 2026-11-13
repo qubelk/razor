@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 )
 
-func FindSource() ([]string, error) {
+func FindSources() ([]string, error) {
 	var paths []string
 
 	err := filepath.Walk("src", func(path string, info fs.FileInfo, err error) error {

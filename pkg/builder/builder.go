@@ -65,6 +65,12 @@ func (b *Builder) buildExecutable() error {
 }
 
 func (b *Builder) createVersionFile() error {
+	if !b.exists("build") {
+		if err := os.MkdirAll("build", 0755); err != nil {
+			return err
+		}
+	}
+
 	versionPath := filepath.Join("build", ".VERSION")
 
 	f, err := os.Create(versionPath)
