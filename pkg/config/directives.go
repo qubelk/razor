@@ -14,7 +14,7 @@ package config
 // ```
 // By default `razor init` creates package with current folder name and version 0.1.0.
 // This directive is required.
-type tomlPackage struct {
+type TomlPackage struct {
 	Name    string `toml:"name"`
 	Version string `toml:"version"`
 }
@@ -34,7 +34,7 @@ type tomlPackage struct {
 // [89, 99, 11, 17, 23].
 // Gnu standarts not supported.
 // This directive is required.
-type tomlConfig struct {
+type TomlConfig struct {
 	Compiler string `toml:"compiler"`
 	Standard int    `toml:"standart"`
 }
