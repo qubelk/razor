@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"razor/pkg/builder"
 	"razor/pkg/config"
@@ -29,7 +30,7 @@ var buildCmd = &cobra.Command{
 		cfg, err := config.Parse()
 		if err != nil {
 			fmt.Printf("Failed to parse Razor.toml: %v\n", err)
-			return
+			os.Exit(1)
 		}
 
 		files, err := workspace.FindSources()
@@ -37,6 +38,7 @@ var buildCmd = &cobra.Command{
 
 		if err := b.Build(); err != nil {
 			fmt.Printf("Failed to build project: %v\n", err)
+			os.Exit(1)
 		}
 	},
 }
