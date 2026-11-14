@@ -10,6 +10,9 @@ Razor command list:
 # Initialize project, create Razor.toml and src/ directory.
 razor init
 
+# Create <workdir> folder and init project in it.
+razor new <workdir>
+
 # Build project into build/ directory, with name from Razor.toml.
 razor build # or `razor run` for build and run.
 
