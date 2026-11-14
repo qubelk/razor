@@ -64,11 +64,11 @@ func createSrcDirectory() {
 
 	data := `#include <stdio.h>
 	
-	int main(void) {
-		printf("Hello, World!\n");
-		return 0;
-	}
-	`
+int main(void) {
+	printf("Hello, World!\n");
+	return 0;
+}
+`
 
 	if _, err := f.WriteString(data); err != nil {
 		fmt.Printf("Failed to write into %s file: %v\n", filepath.Join("src", "main.c"), err)
