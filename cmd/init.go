@@ -63,7 +63,7 @@ func createSrcDirectory() {
 	defer f.Close()
 
 	data := `#include <stdio.h>
-	
+
 int main(void) {
 	printf("Hello, World!\n");
 	return 0;
