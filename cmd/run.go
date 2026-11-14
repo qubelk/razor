@@ -14,7 +14,7 @@ import (
 
 var runCmd = &cobra.Command{
 	Use:   "run",
-	Short: "Run executable",
+	Short: "Build and run",
 	Long:  "Build project and run executable",
 	Run: func(cmd *cobra.Command, args []string) {
 		cfg, err := config.Parse()
