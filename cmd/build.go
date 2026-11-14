@@ -34,6 +34,11 @@ var buildCmd = &cobra.Command{
 		}
 
 		files, err := workspace.FindSources()
+		if err != nil {
+			fmt.Printf("Failed to find source files: %v\n", err)
+			os.Exit(1)
+		}
+
 		b := builder.New(cfg, filterSources(files))
 
 		if err := b.Build(); err != nil {
